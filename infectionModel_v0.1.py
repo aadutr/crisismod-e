@@ -54,7 +54,7 @@ def populationModel(t, n, r, p):
   R_inf1 = r_meeting1 * r_infection1 * (HP / TP) * IP1 #infection rate 1: chance they susceptible people meet asymptomatic patients ánd that they are infected
   R_inf2 = r_meeting2 * r_infection2 * (HP / TP) * IP2 #infection rate 2: people are infected by symptomatic patients
   R_inf3 = r_meeting3 * r_infection3 * (HP / TP) * IP3 #infection rate 3: people are infected by hospitalized patients
-  r_d = r_d1 + logistic(IP3, cap_IC) * r_d2
+  r_d = r_d1 + logistic(IP3, cap_IC) * r_d2 * r_d1
   
   dn = np.empty(len(n)) #create an empty array to define the ODEs
 
