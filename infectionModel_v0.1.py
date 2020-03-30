@@ -7,7 +7,7 @@ import numpy as np
 from scipy.integrate import solve_ivp
 import os
 
-# make room for figures
+# make room for figures for later
 if not os.path.exists('figures'):
   os.mkdir('figures')
 
