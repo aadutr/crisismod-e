@@ -56,23 +56,23 @@ def populationModel(t, n, r, p):
   return dn
 
 # adapted from https://math.stackexchange.com/a/2869151
-def jacPopulationModel(t, n, r):
-  eps = np.finfo(np.float).eps
-  J = np.zeros([len(n), len(n)])
+# def jacPopulationModel(t, n, r):
+#   eps = np.finfo(np.float).eps
+#   J = np.zeros([len(n), len(n)])
 
-  for i in range(len(n)):
-    n1 = n.copy()
-    n2 = n.copy()
+#   for i in range(len(n)):
+#     n1 = n.copy()
+#     n2 = n.copy()
 
-    n1[i] += eps
-    n2[i] -= eps
+#     n1[i] += eps
+#     n2[i] -= eps
 
-    f1 = populationModel(t, n1, r)
-    f2 = populationModel(t, n2, r)
+#     f1 = populationModel(t, n1, r)
+#     f2 = populationModel(t, n2, r)
 
-    J[:, i] = (f1 - f2) / (2 * eps)
+#     J[:, i] = (f1 - f2) / (2 * eps)
 
-  return J
+#   return J
 
 def logistic(SP3, cap_ER):
   return np.exp(SP3 - cap_ER) / (np.exp(SP3 - cap_ER) + 1)
