@@ -28,28 +28,38 @@ def populationModel(t, n, params):
   IP1 = n[1]
   IP2 = n[2]
   IP3 = n[3]
-  RP  = n[4]
-  DP  = n[5]
+  IP4 = n[4]
+  RP  = n[5]
+  DP  = n[6]
   
 
-  TP = SP + IP1 + IP2 + IP3 + RP
+  TP = SP + IP1 + IP2 + IP3 + IP4 + RP
   cap_IC = params["n_beds"] / params["pop_size"] # Determines how many IC beds are available.
 
   #TP = params["n0_susc"] + params["n0_inf1"] + params["n0_inf2"] + params["n0_inf3"] + params["n0_rec"] #total population
  
   R_inf1 = params["r_meeting1"] * params["r_infection1"] * (SP / TP) * IP1 #infection rate 1: chance they susceptible people meet asymptomatic patients ánd that they are infected
   R_inf2 = params["r_meeting2"] * params["r_infection2"] * (SP / TP) * IP2 #infection rate 2: people are infected by symptomatic patients
-  R_inf3 = params["r_meeting3"] * params["r_infection3"] * (SP / TP) * IP3 #infection rate 3: people are infected by hospitalized patients
-  r_d = params["r_d1"] + logistic(IP3, cap_IC) * params["r_d2"] * params["r_d1"]
+  R_inf3 = params["r_meeting3"] * params["r_infection3"] * (SP / TP) * (IP3 + IP4) #infection rate 3: people are infected by hospitalized patients
+  r_d = params["r_d1"] + logistic(IP4, cap_IC) * params["r_d2"] * params["r_d1"]
   
   dn = np.empty(len(n)) #create an empty array to define the ODEs
 
+  # dn[0] = - R_inf1 - R_inf2 - R_inf3
+  # dn[1] = + R_inf1 + R_inf2 + R_inf3 - params["r_sym"] * IP1 - params["r_im1"] * IP1
+  # dn[2] = + params["r_sym"] * IP1 - params["r_hos"] * IP2 - params["r_im2"] * IP2  
+  # dn[3] = + params["r_hos"] * IP2 - params["r_im3"] *IP3 - r_d * IP3
+  # dn[4] = + params["r_im1"] * IP1 + params["r_im2"] * IP2 + params["r_im3"]* IP3
+  # dn[5] = + r_d * IP3
+  
+  # v2.3
   dn[0] = - R_inf1 - R_inf2 - R_inf3
   dn[1] = + R_inf1 + R_inf2 + R_inf3 - params["r_sym"] * IP1 - params["r_im1"] * IP1
-  dn[2] = + params["r_sym"] * IP1 - params["r_hos"] * IP2 - params["r_im2"] * IP2  
-  dn[3] = + params["r_hos"] * IP2 - params["r_im3"] *IP3 - r_d * IP3
-  dn[4] = + params["r_im1"] * IP1 + params["r_im2"] * IP2 + params["r_im3"]* IP3
-  dn[5] = + r_d * IP3
+  dn[2] = + params["r_sym"] * IP1 - params["r_hos"] * IP2 - params["r_im2"] * IP2 - r_d * IP2 
+  dn[3] = + params["r_hos"] * IP2 - params["r_im3"] * IP3 - r_d * IP3 + params["r_rehos"] * IP4 -params["r_ic"] * IP3
+  dn[4] = + params["r_ic"] * IP3 - params["r_rehos"] * IP4 -r_d * IP4;
+  dn[5] = + params["r_im1"] * IP1 + params["r_im2"] * IP2 + params["r_im3"]* IP3
+  dn[6] = + r_d * (IP2 + IP3 + IP4)
   
   return dn
 

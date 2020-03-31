@@ -24,11 +24,16 @@ r_im1 0.05
 r_im2 0.08
 #recovery rate for hospitalized patients
 r_im3 0.1
+#rate at which hospitalized patients go to ICU[needs to be calculated]
+r_ic 0.04
+#rate at which patients are rehospitalized after ICU[needs to be calculated]
+r_rehos 0.01
 #initial conditions: fraction of the population in each state.
 n0_susc 0.9999975
 n0_inf1 0.0000025
 n0_inf2 0
 n0_inf3 0
+n0_inf4 0
 n0_rec 0
 n0_dead 0
 #number of IC beds
