@@ -27,7 +27,7 @@ t = np.linspace(tstart, tend, tend * 100)
 sol = solve_ivp(populationModel, tspan, n0, args=[ params], dense_output=True)
 print(sol.message)
 y = sol.sol(t)
-
+ 
 #plotting the solution
 fig1, ax1 = plt.subplots()
 

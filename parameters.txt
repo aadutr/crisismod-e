@@ -4,12 +4,16 @@ r_meeting1 10
 r_meeting2 5
 #rate at which susceptible people meet hospitalized patients
 r_meeting3 1
+#rate at which susceptible people meet ICU patients
+r_meeting4 0.5
 #rate at which asymptomatic patients infect people
 r_infection1 0.01
 #rate at which symptomatic patients infect people
 r_infection2 0.3
 #rate at which hospitalized patients infect people
 r_infection3 0.1
+#rate at which ICU patients infect people
+r_infection4 0.2
 #rate at which asymptomatic patients get symptoms
 r_sym 0.05
 #rate at which symptomatic patients become hospitalized
