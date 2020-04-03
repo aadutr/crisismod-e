@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np 
 from scipy.integrate import solve_ivp
 from scipy.optimize import minimize
+from scipy.optimize import curve_fit
 import os
 from function_lib import *
 
@@ -56,8 +57,9 @@ y_shift[:,1:] = y_perday[1:,0:tend-1:1] #Putting it in the new matrix with posit
 delta_y = (y_perday[1:,:] - y_shift)    #calculating the difference in cases for each category between consecutive days
 t_days = np.linspace(tstart, tend, tend)#having a correct time array for plotting purposes
 
-#model_mse = mse_calculator(y_perday,iceland_data)
-rates_opt = minimize(mse_calculator(y_perday,iceland_data),r0)
+model_mse = mse_calculator(y_perday,iceland_data)
+#rates_opt = minimize(mse_calculator(y_perday,iceland_data),r0)
+#rates_opt = curve_fit
 
 #calculating the error between 
 #plotting the amount of new cases per day per group
