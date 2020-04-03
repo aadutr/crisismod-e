@@ -10,7 +10,7 @@ from scipy.integrate import solve_ivp
 import os
 import csv
 
-def populationModel(t, n, params):
+def populationModel(t, n, r, pop_info):
   """ Define the population model based on the different rates and initial conditions 
 
     Parameters
@@ -35,32 +35,29 @@ def populationModel(t, n, params):
   
 
   TP = SP + IP1 + IP2 + IP3 + IP4 + RP
-  cap_IC = params["n_beds"] / params["pop_size"] # Determines how many IC beds are available.
+  cap_IC = pop_info[0] / pop_info[1] # Determines how many IC beds are available.
 
-  #TP = params["n0_susc"] + params["n0_inf1"] + params["n0_inf2"] + params["n0_inf3"] + params["n0_rec"] #total population
- 
-  R_inf1 = params["r_meeting1"] * params["r_infection1"] * (SP / TP) * IP1 #infection rate 1: chance they susceptible people meet asymptomatic patients ánd that they are infected
-  R_inf2 = params["r_meeting2"] * params["r_infection2"] * (SP / TP) * IP2 #infection rate 2: people are infected by symptomatic patients
-  R_inf3 = params["r_meeting3"] * params["r_infection3"] * (SP / TP) * (IP3) #infection rate 3: people are infected by hospitalized patients
-  R_inf4 = params["r_meeting4"] * params["r_infection4"] * (SP / TP) * (IP4) #infection rate 3: people are infected by ICU patients
-  r_d = params["r_d1"] + logistic(IP4, cap_IC) * params["r_d2"] * params["r_d1"]
+  R_inf1 = r[0] * r[4] * (SP / TP) * IP1 #infection rate 1: chance they susceptible people meet asymptomatic patients ánd that they are infected
+  R_inf2 = r[1] * r[5] * (SP / TP) * IP2 #infection rate 2: people are infected by symptomatic patients
+  R_inf3 = r[2] * r[6] * (SP / TP) * (IP3) #infection rate 3: people are infected by hospitalized patients
+  R_inf4 = r[3] * r[7] * (SP / TP) * (IP4) #infection rate 3: people are infected by ICU patients
+  r_d = r[10] + logistic(IP4, cap_IC) * r[11] * r[10]
+  
+  #R_inf1 = params["r_meeting1"] * params["r_infection1"] * (SP / TP) * IP1 #infection rate 1: chance they susceptible people meet asymptomatic patients ánd that they are infected
+  #R_inf2 = params["r_meeting2"] * params["r_infection2"] * (SP / TP) * IP2 #infection rate 2: people are infected by symptomatic patients
+  #R_inf3 = params["r_meeting3"] * params["r_infection3"] * (SP / TP) * (IP3) #infection rate 3: people are infected by hospitalized patients
+  #R_inf4 = params["r_meeting4"] * params["r_infection4"] * (SP / TP) * (IP4) #infection rate 3: people are infected by ICU patients
+  #r_d = params["r_d1"] + logistic(IP4, cap_IC) * params["r_d2"] * params["r_d1"]
   
   dn = np.empty(len(n)) #create an empty array to define the ODEs
-
-  # dn[0] = - R_inf1 - R_inf2 - R_inf3
-  # dn[1] = + R_inf1 + R_inf2 + R_inf3 - params["r_sym"] * IP1 - params["r_im1"] * IP1
-  # dn[2] = + params["r_sym"] * IP1 - params["r_hos"] * IP2 - params["r_im2"] * IP2  
-  # dn[3] = + params["r_hos"] * IP2 - params["r_im3"] *IP3 - r_d * IP3
-  # dn[4] = + params["r_im1"] * IP1 + params["r_im2"] * IP2 + params["r_im3"]* IP3
-  # dn[5] = + r_d * IP3
   
   # v2.3
   dn[0] = - R_inf1 - R_inf2 - R_inf3 - R_inf4
-  dn[1] = + R_inf1 + R_inf2 + R_inf3 + R_inf4 - params["r_sym"] * IP1 - params["r_im1"] * IP1
-  dn[2] = + params["r_sym"] * IP1 - params["r_hos"] * IP2 - params["r_im2"] * IP2 - r_d * IP2 
-  dn[3] = + params["r_hos"] * IP2 - params["r_im3"] * IP3 - r_d * IP3 + params["r_rehos"] * IP4 -params["r_ic"] * IP3
-  dn[4] = + params["r_ic"] * IP3 - params["r_rehos"] * IP4 -r_d * IP4;
-  dn[5] = + params["r_im1"] * IP1 + params["r_im2"] * IP2 + params["r_im3"]* IP3
+  dn[1] = + R_inf1 + R_inf2 + R_inf3 + R_inf4 - r[8] * IP1 - r[12] * IP1
+  dn[2] = + r[8] * IP1 - r[9] * IP2 - r[13] * IP2 - r_d * IP2 
+  dn[3] = + r[9] * IP2 - r[14] * IP3 - r_d * IP3 + r[16] * IP4 - r[15] * IP3
+  dn[4] = + r[15] * IP3 - r[16] * IP4 -r_d * IP4;
+  dn[5] = + r[12] * IP1 + r[13] * IP2 + r[14]* IP3
   dn[6] = + r_d * (IP2 + IP3 + IP4)
   
   return dn

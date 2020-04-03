@@ -5,7 +5,7 @@ r_meeting2 5
 #rate at which susceptible people meet hospitalized patients
 r_meeting3 1
 #rate at which susceptible people meet ICU patients
-r_meeting4 0
+r_meeting4 0.5
 #rate at which asymptomatic patients infect people
 r_infection1 0.07
 #rate at which symptomatic patients infect people
@@ -13,7 +13,7 @@ r_infection2 0.34
 #rate at which hospitalized patients infect people
 r_infection3 0.209
 #rate at which ICU patients infect people
-r_infection4 0
+r_infection4 0.05
 #rate at which asymptomatic patients get symptoms
 r_sym 0.2
 #rate at which symptomatic patients become hospitalized
@@ -29,9 +29,9 @@ r_im2 0.08
 #recovery rate for hospitalized patients
 r_im3 0.087
 #rate at which hospitalized patients go to ICU[needs to be calculated]
-r_ic 0.0
+r_ic 0.1
 #rate at which patients are rehospitalized after ICU[needs to be calculated]
-r_rehos 0.0
+r_rehos 0.1
 #initial conditions: fraction of the population in each state.
 n0_susc 0.995544
 n0_inf1 0.00220172
@@ -41,6 +41,6 @@ n0_inf4 5.49058e-06
 n0_rec 0.00018668
 n0_dead 5.49058e-06
 #number of IC beds
-n_beds 1250
+n_beds 914
 #size of the population
 pop_size 364260

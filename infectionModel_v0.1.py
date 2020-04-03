@@ -2,6 +2,7 @@
 import matplotlib.pyplot as plt
 import numpy as np 
 from scipy.integrate import solve_ivp
+from scipy.optimize import minimize
 import os
 from function_lib import *
 
@@ -13,9 +14,11 @@ colors = ['#299727ff', '#b6311cff', '#276ba2ff', '#424242ff']
 
 
 #Declaration of the input variables
-params = file_to_dict("parameters_new.txt")                        
-n0 = [params["n0_susc"], params["n0_inf1"], params["n0_inf2"],
-      params["n0_inf3"], params["n0_inf4"], params["n0_rec"], params["n0_dead"]]  #initial conditions: fraction of the population that is in a certain state. 
+params = file_to_dict("iceland_parameters.txt")
+vals = np.fromiter(params.values(), dtype=float)
+r0 = vals[0:17] #extract the rates
+n0 = vals[17:24]
+pop_info = vals[24:26]
 
 #creating the time array
 tstart = 0
@@ -24,7 +27,7 @@ tspan = (tstart, tend)
 t = np.linspace(tstart, tend, tend * 100)
 
 #solving the system of ODEs 
-sol = solve_ivp(populationModel, tspan, n0, args=[ params], dense_output=True)
+sol = solve_ivp(populationModel, tspan, n0, args=[r0,pop_info], dense_output=True)
 print(sol.message)
 y = sol.sol(t)
 
@@ -53,7 +56,8 @@ y_shift[:,1:] = y_perday[1:,0:tend-1:1] #Putting it in the new matrix with posit
 delta_y = (y_perday[1:,:] - y_shift)    #calculating the difference in cases for each category between consecutive days
 t_days = np.linspace(tstart, tend, tend)#having a correct time array for plotting purposes
 
-model_mse = mse_calculator(y_perday,iceland_data)
+#model_mse = mse_calculator(y_perday,iceland_data)
+rates_opt = minimize(mse_calculator(y_perday,iceland_data),r0)
 
 #calculating the error between 
 #plotting the amount of new cases per day per group
