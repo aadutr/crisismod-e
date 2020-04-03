@@ -13,7 +13,7 @@ colors = ['#299727ff', '#b6311cff', '#276ba2ff', '#424242ff']
 
 
 #Declaration of the input variables
-params = file_to_dict("parameters.txt")                        
+params = file_to_dict("parameters_new.txt")                        
 n0 = [params["n0_susc"], params["n0_inf1"], params["n0_inf2"],
       params["n0_inf3"], params["n0_inf4"], params["n0_rec"], params["n0_dead"]]  #initial conditions: fraction of the population that is in a certain state. 
 
@@ -27,6 +27,9 @@ t = np.linspace(tstart, tend, tend * 100)
 sol = solve_ivp(populationModel, tspan, n0, args=[ params], dense_output=True)
 print(sol.message)
 y = sol.sol(t)
+
+#loading the actual data
+iceland_data = data_loader('iceland_data.csv',params["pop_size"])
  
 #plotting the solution
 fig1, ax1 = plt.subplots()

@@ -1,0 +1,46 @@
+#rate at which susceptible people meet asymptomatic patients
+r_meeting1 10
+#rate at which susceptible people meet symptomatic patients
+r_meeting2 5
+#rate at which susceptible people meet hospitalized patients
+r_meeting3 1
+#rate at which susceptible people meet ICU patients
+r_meeting4 0
+#rate at which asymptomatic patients infect people
+r_infection1 0.07
+#rate at which symptomatic patients infect people
+r_infection2 0.34
+#rate at which hospitalized patients infect people
+r_infection3 0.209
+#rate at which ICU patients infect people
+r_infection4 0
+#rate at which asymptomatic patients get symptoms
+r_sym 0.2
+#rate at which symptomatic patients become hospitalized
+r_hos 0.14
+#death rate 1: rate constant for dying due to the disease
+r_d1 0.01
+#death rate 2: relative increae in death rate when IC beds are full
+r_d2 0.04
+#recovery rate for asymptomatic patients
+r_im1 0.05
+#recovery rate for symptomatic patients
+r_im2 0.08
+#recovery rate for hospitalized patients
+r_im3 0.087
+#rate at which hospitalized patients go to ICU[needs to be calculated]
+r_ic 0.0
+#rate at which patients are rehospitalized after ICU[needs to be calculated]
+r_rehos 0.0
+#initial conditions: fraction of the population in each state.
+n0_susc 0.9999975
+n0_inf1 0.0000025
+n0_inf2 0
+n0_inf3 0
+n0_inf4 0
+n0_rec 0
+n0_dead 0
+#number of IC beds
+n_beds 1250
+#size of the population
+pop_size 364260

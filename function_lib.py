@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np 
 from scipy.integrate import solve_ivp
 import os
+import csv
 
 def populationModel(t, n, params):
   """ Define the population model based on the different rates and initial conditions 
@@ -92,3 +93,31 @@ def file_to_dict(filename):
                 params[key] = float(val)
                 
     return params
+
+def data_loader(filename,pop_size):
+    """
+    Load the actual data in an array so that we can fit the model to it
+
+    Parameters
+    ----------
+    filename : string
+        CSV file containing the country, date, number of people in each category and number of tests.
+
+    Returns
+    -------
+    array with fraction of population in each category
+
+    """
+    with open(filename, newline='') as csvfile:
+        data = list(csv.reader(csvfile))
+   
+        data = np.array(data)
+
+
+    data = np.delete(data,[0,1,7],axis=1) #delete country, date and tests
+    data = np.delete(data,[0],axis=0) #delete header
+    data = np.transpose(data)
+    data = data.astype(np.float)
+    data = np.divide(data,pop_size)
+    
+    return(data)
