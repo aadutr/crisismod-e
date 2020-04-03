@@ -33,7 +33,7 @@ r_ic 0.0
 #rate at which patients are rehospitalized after ICU[needs to be calculated]
 r_rehos 0.0
 #initial conditions: fraction of the population in each state.
-n0_susc 0.9999975
+n0_susc 0.995544
 n0_inf1 0.00220172
 n0_inf2 0.00201504
 n0_inf3 4.11794e-05

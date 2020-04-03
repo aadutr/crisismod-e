@@ -53,6 +53,9 @@ y_shift[:,1:] = y_perday[1:,0:tend-1:1] #Putting it in the new matrix with posit
 delta_y = (y_perday[1:,:] - y_shift)    #calculating the difference in cases for each category between consecutive days
 t_days = np.linspace(tstart, tend, tend)#having a correct time array for plotting purposes
 
+model_mse = mse_calculator(y_perday,iceland_data)
+
+#calculating the error between 
 #plotting the amount of new cases per day per group
 fig2, ax2 = plt.subplots()
 ax2.plot(t_days,delta_y.transpose(), linewidth = 3)
@@ -64,6 +67,7 @@ ax2.set_xlabel('Time (days)')
 fig2.savefig('figures/newcaserate.png')
 
 plt.show()
+
 
 
 

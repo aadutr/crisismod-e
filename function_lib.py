@@ -126,3 +126,25 @@ def data_loader(filename,pop_size):
     data = np.concatenate((sum_categories,data),axis=0)
   
     return(data)
+
+def mse_calculator(model,data):
+    """
+    
+    Parameters
+    ----------
+    model : Array of float
+        fractions of the population in a category at each day as calculated by the model
+    data : Array of float
+        fractions of the population in a categorty at each day as observed in real-life 
+
+    Returns
+    -------
+    mse_array: Array of float
+        mse for each day
+
+    """
+    
+    model_compare = np.delete(model,slice(np.size(data,1),np.size(model,1)),axis=1) #select only the days that you have data for to compare
+    mse = (np.square(model_compare - data)).mean(axis=0) #calculate the mse between the model and the data at each day
+    
+    return(mse)
