@@ -34,12 +34,12 @@ r_ic 0.0
 r_rehos 0.0
 #initial conditions: fraction of the population in each state.
 n0_susc 0.9999975
-n0_inf1 0.0000025
-n0_inf2 0
-n0_inf3 0
-n0_inf4 0
-n0_rec 0
-n0_dead 0
+n0_inf1 0.00220172
+n0_inf2 0.00201504
+n0_inf3 4.11794e-05
+n0_inf4 5.49058e-06
+n0_rec 0.00018668
+n0_dead 5.49058e-06
 #number of IC beds
 n_beds 1250
 #size of the population
