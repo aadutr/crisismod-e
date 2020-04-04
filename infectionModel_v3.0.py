@@ -13,10 +13,19 @@ from scipy.integrate import odeint
 if not os.path.exists('figures'):
   os.mkdir('figures')
 
-colors = ['#299727ff', '#b6311cff', '#276ba2ff', '#424242ff']
+
+# colors = ['#299727ff', '#b6311cff', '#276ba2ff', '#424242ff']
+colors = ['r', 'b', 'g', 'c', 'm', 'k', 'y']
+
+# what country/region?
+country = 'sicilia' #pick 'iceland' for Iceland
+datafile = country + '_data.csv'
+parameterfile = country + '_parameters.txt'
+
 
 #Declaration of the input variables
-input_dict = file_to_dict("iceland_parameters.txt")
+
+input_dict = file_to_dict(parameterfile)    
 vals = np.fromiter(input_dict.values(), dtype=float)
 
 #sorry for this mess feel free to make a function of this
@@ -51,8 +60,8 @@ params.add('pop_size', value=vals[25], vary=False)
 n0 = [params['n0_susc'].value, params['n0_inf1'].value, params['n0_inf2'].value, params['n0_inf3'].value, params['n0_inf4'].value, params['n0_rec'].value, params['n0_dead'].value]
 
 #loading the actual data
-iceland_data = data_loader('iceland_data.csv',params['pop_size'].value)
-iceland_data = np.transpose(iceland_data)
+country_data = data_loader(datafile,params['pop_size'].value)
+country_data = np.transpose(country_data)
 
 #creating the time array
 tstart = 0
@@ -61,22 +70,23 @@ tspan = (tstart, tend)
 t = np.linspace(tstart, tend, tend * 100)
 
 # making a time array for the model fitting (this is smaller than 365 days bc we have only 8 datapoints)
-t_measured = np.linspace(0, 7, 8)
-cat2_measured = iceland_data[:,1]
+amount_of_days = country_data.shape[0]
+t_measured = np.linspace(0, amount_of_days - 1, amount_of_days)
+# cat2_measured = country_data[:,1]
 
 # fit model
-result = minimize(residual, params, args=(t_measured, iceland_data), method='leastsq',nan_policy='raise')  # leastsq nelder
+result = minimize(residual, params, args=(t_measured, country_data), method='leastsq',nan_policy='raise')  # leastsq nelder
 # check results of the fit
-data_fitted = g(np.linspace(0., 7., 100), n0, result.params)
+data_fitted = g(np.linspace(0., 32., 100), n0, result.params)
 
 # plot fitted data
 fig1, ax1 = plt.subplots()
-for i in range(0,np.size(iceland_data,1)):
-    ax1.scatter(t_measured, iceland_data[:,i], marker='o', color='b', label='measured data', s=75)
+for i in range(0,np.size(country_data,1)):
+    ax1.scatter(t_measured, country_data[:,i], marker='o', color=colors[i], label='measured data', s=75)
 
-ax1.plot(np.linspace(0., 7., 100), data_fitted)
-ax1.legend(['Susceptible', 'Asymptomatic', 'Symptomatic', 'Hospitalized', 'ICU', 'Recovered', 'Dead'], loc = "right")
-ax1.set_title('Model fit for Iceland')
+ax1.plot(np.linspace(0., 32., 100), data_fitted)
+ax1.legend(['Susceptible', 'Asymptomatic', 'Symptomatic', 'Hospitalized', 'ICU', 'Recovered', 'Dead'], loc = "upper left")
+ax1.set_title('Model fit for ' + country)
 ax1.set_ylabel('Fraction of people')
 ax1.set_xlabel('Time (days)')
 ax1.set_ylim([0, 1.1 * max(data_fitted[:, 1])])
@@ -85,7 +95,7 @@ ax1.set_ylim([0, 1.1 * max(data_fitted[:, 1])])
 report_fit(result)
 
 plt.show()
-fig1.savefig('figures/Model_fit_iceland.png')
+fig1.savefig('figures/Model_fit_'+ country +'.png')
 
 #run the ODE model with the new parameters for the entire time array and plot results
 new_params = result.params
@@ -98,7 +108,7 @@ ax2.set_title('Population disease model with fitted rates')
 ax2.set_ylabel('Fraction of people')
 ax2.set_xlabel('Time (days)')
 
-fig2.savefig('figures/Population disease model Iceland.png')
+fig2.savefig('figures/Population disease model '+ country +'.png')
 
 
 #solving the system of ODEs 

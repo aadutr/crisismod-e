@@ -131,7 +131,7 @@ def data_loader(filename,pop_size):
     data = data.astype(np.float)
     data = np.divide(data,pop_size)
     sum_categories = np.sum(data,axis=0)
-    sum_categories = np.reshape(sum_categories,(1,8))
+    sum_categories = np.reshape(sum_categories,(1,data.shape[1]))
     sum_categories = 1-sum_categories
     
     data = np.concatenate((sum_categories,data),axis=0)
