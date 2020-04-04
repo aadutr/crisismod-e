@@ -18,7 +18,7 @@ if not os.path.exists('figures'):
 colors = ['r', 'b', 'g', 'c', 'm', 'k', 'y']
 
 # what country/region?
-country = 'sicilia' #pick 'iceland' for Iceland
+country = 'campania' #pick 'iceland' for Iceland
 datafile = country + '_data.csv'
 parameterfile = country + '_parameters.txt'
 
@@ -77,14 +77,14 @@ t_measured = np.linspace(0, amount_of_days - 1, amount_of_days)
 # fit model
 result = minimize(residual, params, args=(t_measured, country_data), method='leastsq',nan_policy='raise')  # leastsq nelder
 # check results of the fit
-data_fitted = g(np.linspace(0., 32., 100), n0, result.params)
+data_fitted = g(np.linspace(0., amount_of_days, 100), n0, result.params)
 
 # plot fitted data
 fig1, ax1 = plt.subplots()
 for i in range(0,np.size(country_data,1)):
     ax1.scatter(t_measured, country_data[:,i], marker='o', color=colors[i], label='measured data', s=75)
 
-ax1.plot(np.linspace(0., 32., 100), data_fitted)
+ax1.plot(np.linspace(0., amount_of_days, 100), data_fitted)
 ax1.legend(['Susceptible', 'Asymptomatic', 'Symptomatic', 'Hospitalized', 'ICU', 'Recovered', 'Dead'], loc = "upper left")
 ax1.set_title('Model fit for ' + country)
 ax1.set_ylabel('Fraction of people')
