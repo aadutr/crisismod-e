@@ -138,24 +138,32 @@ def data_loader(filename,pop_size):
   
     return(data)
 
-def mse_calculator(model,data):
-    """
-    
-    Parameters
-    ----------
-    model : Array of float
-        fractions of the population in a category at each day as calculated by the model
-    data : Array of float
-        fractions of the population in a categorty at each day as observed in real-life 
-
-    Returns
-    -------
-    mse_array: Array of float
-        mse for each day
-
-    """
-    
-    model_compare = np.delete(model,slice(np.size(data,1),np.size(model,1)),axis=1) #select only the days that you have data for to compare
-    mse = (np.square(model_compare - data)).mean(axis=0) #calculate the mse between the model and the data at each day
-    
-    return(mse)
+def parameters(vals,country_data):
+    params = Parameters() #special type of parameters as defined by the lmfit module
+    params.add('r_meeting1', value=vals[0], vary=True, min=0)
+    params.add('r_meeting2', value=vals[1], vary=True,min=0)
+    params.add('r_meeting3', value=vals[2], vary=True,min=0)
+    params.add('r_meeting4', value=vals[3], vary=True,min=0)
+    params.add('r_infection1', value=vals[4], vary=True,min=0)
+    params.add('r_infection2', value=vals[5], vary=True,min=0)
+    params.add('r_infection3', value=vals[6], vary=True,min=0)
+    params.add('r_infection4', value=vals[7], vary=True,min=0)
+    params.add('r_sym', value=vals[8], vary=True,min=0)
+    params.add('r_hos', value=vals[9], vary=True,min=0)
+    params.add('r_d1', value=vals[10], vary=True,min=0)
+    params.add('r_d2', value=vals[11], vary=True,min=0)
+    params.add('r_im1', value=vals[12], vary=True,min=0)
+    params.add('r_im2', value=vals[13], vary=True,min=0)
+    params.add('r_im3', value=vals[14], vary=True,min=0)
+    params.add('r_ic', value=vals[15], vary=True,min=0)
+    params.add('r_rehos', value=vals[16], vary=True,min=0)
+    params.add('n0_susc', value=country_data[0,0], vary=False)
+    params.add('n0_inf1', value=country_data[0,1], vary=False)
+    params.add('n0_inf2', value=country_data[0,2], vary=False)
+    params.add('n0_inf3', value=country_data[0,3], vary=False)
+    params.add('n0_inf4', value=country_data[0,4], vary=False)
+    params.add('n0_rec', value=country_data[0,5], vary=False)
+    params.add('n0_dead', value=country_data[0,6], vary=False)
+    params.add('n_beds', value=vals[24], vary=False)
+    params.add('pop_size', value=vals[25], vary=False)
+    return params
