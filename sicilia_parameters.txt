@@ -18,7 +18,7 @@ r_infection4 0.05
 r_sym 0.2
 #rate at which symptomatic patients become hospitalized
 r_hos 0.14
-#death rate 1: rate constant for dying due to the disease
+#death rate 1: rate constant for dying due to the disease in ICU
 r_d1 0.01
 #death rate 2: relative increae in death rate when IC beds are full
 r_d2 0.04
@@ -44,3 +44,5 @@ n0_dead 0
 n_beds 627
 #size of the population
 pop_size 5017000
+#death rate 0: rate constant for dying from hospital state
+r_d0 0.005

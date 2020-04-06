@@ -42,18 +42,20 @@ def populationModel(n, t, paras):
   R_inf2 = paras['r_meeting2'].value * paras['r_infection2'].value * (SP / TP) * IP2 #infection rate 2: people are infected by symptomatic patients
   R_inf3 = paras['r_meeting3'].value * paras['r_infection3'].value * (SP / TP) * (IP3) #infection rate 3: people are infected by hospitalized patients
   R_inf4 = paras['r_meeting4'].value * paras['r_infection4'].value * (SP / TP) * (IP4) #infection rate 3: people are infected by ICU patients
-  r_d = paras['r_d1'].value + logistic(IP4, cap_IC) * paras['r_d1'] * paras['r_d2']
+  r_dicu = paras['r_d1'].value + logistic(IP4, cap_IC) * paras['r_d1'] * paras['r_d2']
+  r_dhos = paras['r_d0']
+   
   
   dn = np.empty(len(n)) #create an empty array to define the ODEs
   
   # v2.3
   dn[0] = - R_inf1 - R_inf2 - R_inf3 - R_inf4
   dn[1] = + R_inf1 + R_inf2 + R_inf3 + R_inf4 - paras['r_sym'].value * IP1 - paras['r_im1'].value * IP1
-  dn[2] = + paras['r_sym'].value * IP1 - paras['r_hos'].value * IP2 - paras['r_im2'].value * IP2 - r_d * IP2 
-  dn[3] = + paras['r_hos'].value * IP2 - paras['r_im3'].value * IP3 - r_d * IP3 + paras['r_rehos'].value * IP4 - paras['r_ic'].value * IP3
-  dn[4] = + paras['r_ic'].value * IP3 - paras['r_rehos'].value * IP4 -r_d * IP4;
+  dn[2] = + paras['r_sym'].value * IP1 - paras['r_hos'].value * IP2 - paras['r_im2'].value * IP2 #- r_d * IP2 
+  dn[3] = + paras['r_hos'].value * IP2 - paras['r_im3'].value * IP3 - r_dhos * IP3 + paras['r_rehos'].value * IP4 - paras['r_ic'].value * IP3
+  dn[4] = + paras['r_ic'].value * IP3 - paras['r_rehos'].value * IP4 -r_dicu * IP4;
   dn[5] = + paras['r_im1'].value * IP1 + paras['r_im2'].value * IP2 + paras['r_im3'].value* IP3
-  dn[6] = + r_d * (IP2 + IP3 + IP4)
+  dn[6] = + r_dhos * IP3 + r_dicu* IP4
   
   return dn
 
@@ -140,9 +142,9 @@ def data_loader(filename,pop_size):
 
 def parameters(vals,country_data):
     params = Parameters() #special type of parameters as defined by the lmfit module
-    params.add('r_meeting1', value=vals[0], vary=True, min=0)
-    params.add('r_meeting2', value=vals[1], vary=True,min=0)
-    params.add('r_meeting3', value=vals[2], vary=True,min=0)
+    params.add('r_meeting1', value=vals[0], vary=False, min=0, max=15)
+    params.add('r_meeting2', value=vals[1], vary=False, min=0, max=7)
+    params.add('r_meeting3', value=vals[2], vary=True, min=0, max=4)
     params.add('r_meeting4', value=vals[3], vary=True,min=0)
     params.add('r_infection1', value=vals[4], vary=True,min=0)
     params.add('r_infection2', value=vals[5], vary=True,min=0)
@@ -166,4 +168,5 @@ def parameters(vals,country_data):
     params.add('n0_dead', value=country_data[0,6], vary=False)
     params.add('n_beds', value=vals[24], vary=False)
     params.add('pop_size', value=vals[25], vary=False)
+    params.add('r_d0', value=vals[26], vary=True,min=0)
     return params
