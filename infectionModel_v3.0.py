@@ -6,8 +6,9 @@ from scipy.optimize import minimize
 from scipy.optimize import curve_fit
 import os
 from function_lib_new import *
-from lmfit import minimize, Parameters, Parameter, report_fit
+from lmfit import minimize, Parameters, Parameter, report_fit, fit_report
 from scipy.integrate import odeint
+import pickle
 
 # save the figures in a separate folder
 if not os.path.exists('figures'):
@@ -18,7 +19,7 @@ if not os.path.exists('figures'):
 colors = ['r', 'b', 'g', 'c', 'm', 'k', 'y']
 
 # what country/region?
-country = 'campania' #pick 'iceland' for Iceland
+country = 'geneve' #pick 'iceland' for Iceland
 datafile = country + '_data.csv'
 parameterfile = country + '_parameters.txt'
 input_dict = file_to_dict(parameterfile)  
@@ -51,6 +52,16 @@ result = minimize(residual, params, args=(t_measured, country_data), method='lea
 data_fitted = g(np.linspace(0., amount_of_days, 100), n0, result.params)
 # display fitted statistics
 report_fit(result)
+
+
+#Below is construction to use when running the minimizer on multiple datasets
+#and saving the parameters to compare later on.
+#saving the minimizer result to a temporary file for later usage
+with open('par.pkl', 'wb') as f:
+    pickle.dump(result, f)
+#loading in the minimizer result again   
+with open('./par.pkl', 'rb') as f:
+    list2 = pickle.load(f)
 
 # plot fitted data
 fig1, ax1 = plt.subplots()

@@ -77,7 +77,7 @@ def residual(paras, t, data):
     residual = model-data
     #give hospitalized, ICU & dead people a higher weight
     for i in [3,4,6]:
-        residual[:,i]=8*residual[:,i]
+        residual[:,i]=10*residual[:,i]
     
     return residual.ravel()
 
@@ -152,7 +152,7 @@ def data_loader(filename,pop_size):
         data = np.array(data)
 
 
-    data = np.delete(data,[0,1,7],axis=1) #delete country, date and tests
+    data = np.delete(data,[0,1,7,9],axis=1) #delete country, date and tests and comments
     data = np.delete(data,[0],axis=0) #delete header
     data = np.transpose(data)
     data = data.astype(np.float)
@@ -174,7 +174,7 @@ def parameters(input_dict,country_data):
     params.add('r_meeting1b', value=input_dict["r_meeting1b"], vary=True, min=0)
     params.add('r_meeting2b', value=input_dict["r_meeting2b"], vary=True, min=0)
     params.add('r_meeting3b', value=input_dict["r_meeting3b"], vary=True, min=0)
-    params.add('r_meeting4b', value=input_dict["r_meeting4b"], vary=True,min=0)
+    params.add('r_meeting4b', value=input_dict["r_meeting4b"], vary=True, min=0)
     params.add('r_infection1', value=input_dict["r_infection1"], vary=True,min=0)
     params.add('r_infection2', value=input_dict["r_infection2"], vary=True,min=0)
     params.add('r_infection3', value=input_dict["r_infection3"], vary=True,min=0)
