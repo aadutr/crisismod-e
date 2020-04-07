@@ -30,7 +30,7 @@ country_data = np.transpose(country_data)
 
 #Declaration of the input variables 
 vals = np.fromiter(input_dict.values(), dtype=float) #get values from dictionary
-params = parameters(vals,country_data) #define parameters, some are fixed and some are variable (see function_lib_new)
+params = parameters(input_dict,country_data) #define parameters, some are fixed and some are variable (see function_lib_new)
 n0 = [params['n0_susc'].value, params['n0_inf1'].value, params['n0_inf2'].value, #initial conditions
       params['n0_inf3'].value, params['n0_inf4'].value, params['n0_rec'].value, 
       params['n0_dead'].value]
@@ -62,7 +62,8 @@ ax1.legend(['Susceptible', 'Asymptomatic', 'Symptomatic', 'Hospitalized', 'ICU',
 ax1.set_title('Model fit for ' + country)
 ax1.set_ylabel('Fraction of people')
 ax1.set_xlabel('Time (days)')
-ax1.set_ylim([0, 1.1 * max(data_fitted[:, 1])])
+ax1.set_ylim([0,0.00020])
+#ax1.set_ylim([0, 1.1 * max(data_fitted[:, 1])])
 
 plt.show()
 fig1.savefig('figures/Model_fit_'+ country +'.png')
@@ -72,7 +73,9 @@ new_params = result.params
 data_fitted2 = g(t, n0, result.params)
 
 fig2, ax2 = plt.subplots()
-ax2.plot(t,data_fitted2)
+for i in range(0,np.size(country_data,1)):
+    ax2.plot(t,data_fitted2[:,i],color=colors[i])
+
 ax2.legend(['Susceptible', 'Asymptomatic', 'Symptomatic', 'Hospitalized', 'ICU', 'Recovered', 'Dead'], loc = "upper right")
 ax2.set_title('Population disease model with fitted rates')
 ax2.set_ylabel('Fraction of people')

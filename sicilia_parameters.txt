@@ -1,11 +1,15 @@
 #rate at which susceptible people meet asymptomatic patients
 r_meeting1 10
+r_meeting1b 5
 #rate at which susceptible people meet symptomatic patients
 r_meeting2 5
+r_meeting2b 3
 #rate at which susceptible people meet hospitalized patients
 r_meeting3 1
+r_meeting3b 0.5
 #rate at which susceptible people meet ICU patients
-r_meeting4 0.5
+r_meeting4 0.1
+r_meeting4b 0.1
 #rate at which asymptomatic patients infect people
 r_infection1 0.07
 #rate at which symptomatic patients infect people
@@ -21,7 +25,7 @@ r_hos 0.14
 #death rate 1: rate constant for dying due to the disease in ICU
 r_d1 0.01
 #death rate 2: relative increae in death rate when IC beds are full
-r_d2 0.04
+r_d2 0.00
 #recovery rate for asymptomatic patients
 r_im1 0.05
 #recovery rate for symptomatic patients
@@ -46,3 +50,5 @@ n_beds 627
 pop_size 5017000
 #death rate 0: rate constant for dying from hospital state
 r_d0 0.005
+#time at which measures were implemented (days)
+measures_time 11

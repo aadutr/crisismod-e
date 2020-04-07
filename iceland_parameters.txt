@@ -44,3 +44,5 @@ n0_dead 5.49058e-06
 n_beds 914
 #size of the population
 pop_size 364260
+#death rate 0: rate constant for dying from hospital state
+r_d0 0.005

@@ -37,18 +37,17 @@ def populationModel(n, t, paras):
 
   TP = SP + IP1 + IP2 + IP3 + IP4 + RP
   cap_IC = paras['n_beds'].value / paras['pop_size'].value # Determines how many IC beds are available.
-
-  R_inf1 = paras['r_meeting1'].value * paras['r_infection1'].value * (SP / TP) * IP1 #infection rate 1: chance they susceptible people meet asymptomatic patients ánd that they are infected
-  R_inf2 = paras['r_meeting2'].value * paras['r_infection2'].value * (SP / TP) * IP2 #infection rate 2: people are infected by symptomatic patients
-  R_inf3 = paras['r_meeting3'].value * paras['r_infection3'].value * (SP / TP) * (IP3) #infection rate 3: people are infected by hospitalized patients
-  R_inf4 = paras['r_meeting4'].value * paras['r_infection4'].value * (SP / TP) * (IP4) #infection rate 3: people are infected by ICU patients
+  
+  #rates are calculated using an inverse sigmoid from r_meeting1 (before measures) to r_meeting1b (after measures)
+  R_inf1 = rate_sigmoid(paras['r_meeting1'].value, paras['r_meeting1b'].value, t, paras['measures_time'].value) * paras['r_infection1'].value * (SP / TP) * IP1 #infection rate 1: chance they susceptible people meet asymptomatic patients ánd that they are infected
+  R_inf2 = rate_sigmoid(paras['r_meeting2'].value, paras['r_meeting2b'].value, t, paras['measures_time'].value) * paras['r_infection2'].value * (SP / TP) * IP2 #infection rate 2: people are infected by symptomatic patients
+  R_inf3 = rate_sigmoid(paras['r_meeting3'].value, paras['r_meeting3b'].value, t, paras['measures_time'].value) * paras['r_infection3'].value * (SP / TP) * (IP3) #infection rate 3: people are infected by hospitalized patients
+  R_inf4 = rate_sigmoid(paras['r_meeting4'].value, paras['r_meeting4b'].value, t, paras['measures_time'].value) * paras['r_infection4'].value * (SP / TP) * (IP4) #infection rate 3: people are infected by ICU patients
   r_dicu = paras['r_d1'].value + logistic(IP4, cap_IC) * paras['r_d1'] * paras['r_d2']
   r_dhos = paras['r_d0']
-   
-  
   dn = np.empty(len(n)) #create an empty array to define the ODEs
-  
-  # v2.3
+    
+   # v2.3
   dn[0] = - R_inf1 - R_inf2 - R_inf3 - R_inf4
   dn[1] = + R_inf1 + R_inf2 + R_inf3 + R_inf4 - paras['r_sym'].value * IP1 - paras['r_im1'].value * IP1
   dn[2] = + paras['r_sym'].value * IP1 - paras['r_hos'].value * IP2 - paras['r_im2'].value * IP2 #- r_d * IP2 
@@ -75,8 +74,12 @@ def residual(paras, t, data):
 
     n0 = paras['n0_susc'].value, paras['n0_inf1'].value, paras['n0_inf2'].value, paras['n0_inf3'].value, paras['n0_inf4'].value, paras['n0_rec'].value, paras['n0_dead'].value
     model = g(t, n0, paras)
+    residual = model-data
+    #give hospitalized, ICU & dead people a higher weight
+    for i in [3,4,6]:
+        residual[:,i]=8*residual[:,i]
     
-    return (model - data).ravel()
+    return residual.ravel()
 
 def logistic(IP3, cap_IC):
     """ Creates a sigmoid shape that accomodates for the increase in death rate when the IC beds are full. You need this because otherwise the ODEs can not be solved. 
@@ -95,6 +98,28 @@ def logistic(IP3, cap_IC):
 
     """
     return np.exp(IP3 - cap_IC) / (np.exp(IP3 - cap_IC) + 1)
+
+def rate_sigmoid(r_meeting,r_meetingb,t,measures_time):
+    """
+    
+
+    Parameters
+    ----------
+    r_meeting : FLOAT
+        Rate at which people meet BEFORE measures.
+    r_meetingb : FLOAT
+        Rate at which people meet AFTER measures.
+    t : INT
+        Time.
+    measures_time : FLOAT
+        Time in days at which the measures were implemented.
+
+    Returns
+    -------
+    None.
+
+    """
+    return((r_meeting - r_meetingb)*(1-(1/(1+np.exp(-(t-measures_time)))))+ r_meetingb)
 
 def file_to_dict(filename):
     params = {}
@@ -140,25 +165,30 @@ def data_loader(filename,pop_size):
   
     return(data)
 
-def parameters(vals,country_data):
+def parameters(input_dict,country_data):
     params = Parameters() #special type of parameters as defined by the lmfit module
-    params.add('r_meeting1', value=vals[0], vary=False, min=0, max=15)
-    params.add('r_meeting2', value=vals[1], vary=False, min=0, max=7)
-    params.add('r_meeting3', value=vals[2], vary=True, min=0, max=4)
-    params.add('r_meeting4', value=vals[3], vary=True,min=0)
-    params.add('r_infection1', value=vals[4], vary=True,min=0)
-    params.add('r_infection2', value=vals[5], vary=True,min=0)
-    params.add('r_infection3', value=vals[6], vary=True,min=0)
-    params.add('r_infection4', value=vals[7], vary=True,min=0)
-    params.add('r_sym', value=vals[8], vary=True,min=0)
-    params.add('r_hos', value=vals[9], vary=True,min=0)
-    params.add('r_d1', value=vals[10], vary=True,min=0)
-    params.add('r_d2', value=vals[11], vary=True,min=0)
-    params.add('r_im1', value=vals[12], vary=True,min=0)
-    params.add('r_im2', value=vals[13], vary=True,min=0)
-    params.add('r_im3', value=vals[14], vary=True,min=0)
-    params.add('r_ic', value=vals[15], vary=True,min=0)
-    params.add('r_rehos', value=vals[16], vary=True,min=0)
+    params.add('r_meeting1', value=input_dict["r_meeting1"], vary=True, min=0)
+    params.add('r_meeting2', value=input_dict["r_meeting2"], vary=True, min=0)
+    params.add('r_meeting3', value=input_dict["r_meeting3"], vary=True, min=0)
+    params.add('r_meeting4', value=input_dict["r_meeting4"], vary=True,min=0)
+    params.add('r_meeting1b', value=input_dict["r_meeting1b"], vary=True, min=0)
+    params.add('r_meeting2b', value=input_dict["r_meeting2b"], vary=True, min=0)
+    params.add('r_meeting3b', value=input_dict["r_meeting3b"], vary=True, min=0)
+    params.add('r_meeting4b', value=input_dict["r_meeting4b"], vary=True,min=0)
+    params.add('r_infection1', value=input_dict["r_infection1"], vary=True,min=0)
+    params.add('r_infection2', value=input_dict["r_infection2"], vary=True,min=0)
+    params.add('r_infection3', value=input_dict["r_infection3"], vary=True,min=0)
+    params.add('r_infection4', value=input_dict["r_infection4"], vary=True,min=0)
+    params.add('r_sym', value=input_dict["r_sym"], vary=True,min=0)
+    params.add('r_hos', value=input_dict["r_hos"], vary=True,min=0)
+    params.add('r_d0', value=input_dict["r_d0"], vary=True,min=0)
+    params.add('r_d1', value=input_dict["r_d1"], vary=True,min=0)
+    params.add('r_d2', value=input_dict["r_d2"], vary=False,min=0)
+    params.add('r_im1', value=input_dict["r_im1"], vary=True,min=0)
+    params.add('r_im2', value=input_dict["r_im2"], vary=True,min=0)
+    params.add('r_im3', value=input_dict["r_im3"], vary=True,min=0)
+    params.add('r_ic', value=input_dict["r_ic"], vary=True,min=0)
+    params.add('r_rehos', value=input_dict["r_rehos"], vary=True,min=0)
     params.add('n0_susc', value=country_data[0,0], vary=False)
     params.add('n0_inf1', value=country_data[0,1], vary=False)
     params.add('n0_inf2', value=country_data[0,2], vary=False)
@@ -166,7 +196,8 @@ def parameters(vals,country_data):
     params.add('n0_inf4', value=country_data[0,4], vary=False)
     params.add('n0_rec', value=country_data[0,5], vary=False)
     params.add('n0_dead', value=country_data[0,6], vary=False)
-    params.add('n_beds', value=vals[24], vary=False)
-    params.add('pop_size', value=vals[25], vary=False)
-    params.add('r_d0', value=vals[26], vary=True,min=0)
+    params.add('n_beds', value=input_dict["n_beds"], vary=False)
+    params.add('pop_size', value=input_dict["pop_size"], vary=False)
+    params.add('measures_time', value=input_dict["measures_time"], vary=False)
+
     return params
