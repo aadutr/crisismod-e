@@ -62,46 +62,14 @@ for country in countries:
     
 # display fitted statistics
 #report_fit(result)
+i = 0
+fitted_params = np.zeros((len(params),len(countries)))
 
-
-#Below is construction to use when running the minimizer on multiple datasets
-#and saving the parameters to compare later on.
-#saving the minimizer result to a temporary file for later usage
-# with open('par.pkl', 'wb') as f:
-#     pickle.dump(result, f)
-# #loading in the minimizer result again   
-# with open('./par.pkl', 'rb') as f:
-#     list2 = pickle.load(f)
-
-# # plot fitted data
-# fig1, ax1 = plt.subplots()
-# for i in range(0,np.size(country_data,1)):
-#     ax1.scatter(t_measured, country_data[:,i], marker='o', color=colors[i], label='measured data', s=30)
-#     ax1.plot(np.linspace(0., amount_of_days, 100), data_fitted[:,i], color = colors[i])
-    
-# ax1.legend(['Susceptible', 'Asymptomatic', 'Symptomatic', 'Hospitalized', 'ICU', 'Recovered', 'Dead'], loc = "upper left")
-# ax1.set_title('Model fit for ' + country)
-# ax1.set_ylabel('Fraction of people')
-# ax1.set_xlabel('Time (days)')
-# ax1.set_ylim([0,0.00020])
-# #ax1.set_ylim([0, 1.1 * max(data_fitted[:, 1])])
-
-# plt.show()
-# fig1.savefig('figures/Model_fit_'+ country +'.png')
-
-# #run the ODE model with the new parameters for the entire time array and plot results
-# new_params = result.params
-# data_fitted2 = g(t, n0, result.params)
-
-# fig2, ax2 = plt.subplots()
-# for i in range(0,np.size(country_data,1)):
-#     ax2.plot(t,data_fitted2[:,i],color=colors[i])
-
-# ax2.legend(['Susceptible', 'Asymptomatic', 'Symptomatic', 'Hospitalized', 'ICU', 'Recovered', 'Dead'], loc = "upper right")
-# ax2.set_title('Population disease model with fitted rates')
-# ax2.set_ylabel('Fraction of people')
-# ax2.set_xlabel('Time (days)')
-
-# fig2.savefig('figures/Population disease model '+ country +'.png')
-
-
+for minresult in fits:
+    fitted_params[:,i] = list(minresult.params.values())
+    i+=1
+n = 0 
+for name, val in fits[0].params.items():
+    toprint = name + str(fitted_params[n,:])
+    print(toprint)
+    n+=1
