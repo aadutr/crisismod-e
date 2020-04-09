@@ -72,12 +72,13 @@ def residual(paras, t, data):
     compute the residual between actual data and fitted data
     """
 
-    n0 = paras['n0_susc'].value, paras['n0_inf1'].value, paras['n0_inf2'].value, paras['n0_inf3'].value, paras['n0_inf4'].value, paras['n0_rec'].value, paras['n0_dead'].value
+    n0 = [paras['n0_susc'].value, paras['n0_inf1'].value, paras['n0_inf2'].value, paras['n0_inf3'].value, paras['n0_inf4'].value, paras['n0_rec'].value, paras['n0_dead'].value]
+    weights = [paras['w_susc'].value, paras['w_asym'].value, paras['w_sym'].value, paras['w_hos'].value, paras['w_icu'].value, paras['w_rec'].value, paras['w_dead'].value]
     model = g(t, n0, paras)
     residual = model-data
     #give hospitalized, ICU & dead people a higher weight
-    for i in [3,4,6]:
-        residual[:,i]=10*residual[:,i]
+    for i in range(0,np.size(residual, axis=1)):
+        residual[:,i]=weights[i]*residual[:,i]
     
     return residual.ravel()
 
@@ -199,5 +200,12 @@ def parameters(input_dict,country_data):
     params.add('n_beds', value=input_dict["n_beds"], vary=False)
     params.add('pop_size', value=input_dict["pop_size"], vary=False)
     params.add('measures_time', value=input_dict["measures_time"], vary=False)
+    params.add('w_susc', value=input_dict["w_susc"], vary = False)
+    params.add('w_asym', value=input_dict["w_asym"], vary = False)
+    params.add('w_sym', value=input_dict["w_sym"], vary = False)
+    params.add('w_hos', value=input_dict["w_hos"], vary = False)
+    params.add('w_icu', value=input_dict["w_icu"], vary = False)
+    params.add('w_rec', value=input_dict["w_rec"], vary = False)
+    params.add('w_dead', value=input_dict["w_dead"], vary = False)
 
     return params

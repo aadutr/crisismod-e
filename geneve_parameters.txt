@@ -50,4 +50,13 @@ n_beds 979
 pop_size 499480
 #death rate 0: rate constant for dying from hospital state
 r_d0 0.005
+#time in days when government measures were implemented
 measures_time 19
+#weight that should be given to the each data category
+w_susc 0.1
+w_asym 0.1
+w_sym 0.1
+w_hos 1.0
+w_icu 1.0
+w_rec 0.1
+w_dead 1.0

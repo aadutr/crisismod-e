@@ -22,7 +22,7 @@ colors = ['r', 'b', 'g', 'c', 'm', 'k', 'y']
 country = 'geneve' #pick 'iceland' for Iceland
 datafile = country + '_data.csv'
 parameterfile = country + '_parameters.txt'
-input_dict = file_to_dict(parameterfile)  
+input_dict = file_to_dict(parameterfile) 
 
 #loading the actual data
 country_data = data_loader(datafile,input_dict["pop_size"])
@@ -69,12 +69,14 @@ for i in range(0,np.size(country_data,1)):
     ax1.scatter(t_measured, country_data[:,i], marker='o', color=colors[i], label='measured data', s=30)
     ax1.plot(np.linspace(0., amount_of_days, 100), data_fitted[:,i], color = colors[i])
     
-ax1.legend(['Susceptible', 'Asymptomatic', 'Symptomatic', 'Hospitalized', 'ICU', 'Recovered', 'Dead'], loc = "upper left")
-ax1.set_title('Model fit for ' + country)
+ax1.legend(['Susceptible', 'Asymptomatic', 'Symptomatic', 'Hospitalized', 'ICU', 'Recovered', 'Dead'], loc = "best")
+plt.suptitle('Model fit for ' + country, fontsize = 14)
+subtitle_string = 'Weights used: Susc. ' + str(params['w_susc'].value) + ', Asymp. ' + str(params['w_asym'].value) + ', Symp. ' + str(params['w_sym'].value)+ ', Hosp. ' + str(params['w_hos'].value)+ ', ICU ' + str(params['w_icu'].value)+ ', Rec. ' + str(params['w_rec'].value)+ ', Dead ' + str(params['w_dead'].value)
+plt.title(subtitle_string, fontsize = 8)
 ax1.set_ylabel('Fraction of people')
 ax1.set_xlabel('Time (days)')
-ax1.set_ylim([0,0.00020])
-#ax1.set_ylim([0, 1.1 * max(data_fitted[:, 1])])
+#ax1.set_ylim([0,0.00020])
+ax1.set_ylim([0, 1.1 * max(data_fitted[:, 1])])
 
 plt.show()
 fig1.savefig('figures/Model_fit_'+ country +'.png')
@@ -88,7 +90,9 @@ for i in range(0,np.size(country_data,1)):
     ax2.plot(t,data_fitted2[:,i],color=colors[i])
 
 ax2.legend(['Susceptible', 'Asymptomatic', 'Symptomatic', 'Hospitalized', 'ICU', 'Recovered', 'Dead'], loc = "upper right")
-ax2.set_title('Population disease model with fitted rates')
+plt.suptitle('Population disease model for ' + country, fontsize = 14)
+subtitle_string = 'Weights used: Susc. ' + str(params['w_susc'].value) + ', Asymp. ' + str(params['w_asym'].value) + ', Symp. ' + str(params['w_sym'].value)+ ', Hosp. ' + str(params['w_hos'].value)+ ', ICU ' + str(params['w_icu'].value)+ ', Rec. ' + str(params['w_rec'].value)+ ', Dead ' + str(params['w_dead'].value)
+plt.title(subtitle_string, fontsize = 8)
 ax2.set_ylabel('Fraction of people')
 ax2.set_xlabel('Time (days)')
 
