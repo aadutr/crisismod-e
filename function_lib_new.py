@@ -151,14 +151,13 @@ def data_loader(filename,pop_size):
         data = list(csv.reader(csvfile))
    
         data = np.array(data)
-
-
+    
     data = np.delete(data,[0,1,7,9],axis=1) #delete country, date and tests and comments
     data = np.delete(data,[0],axis=0) #delete header
     data = np.transpose(data)
     data = data.astype(np.float)
     data = np.divide(data,pop_size)
-    sum_categories = np.sum(data,axis=0)
+    sum_categories = np.nansum(data,axis=0)
     sum_categories = np.reshape(sum_categories,(1,data.shape[1]))
     sum_categories = 1-sum_categories
     
@@ -166,7 +165,7 @@ def data_loader(filename,pop_size):
   
     return(data)
 
-def parameters(input_dict,country_data):
+def parameters(input_dict,country_data, incomplete=False):
     params = Parameters() #special type of parameters as defined by the lmfit module
     params.add('r_meeting1', value=input_dict["r_meeting1"], vary=True, min=0)
     params.add('r_meeting2', value=input_dict["r_meeting2"], vary=True, min=0)
@@ -176,20 +175,37 @@ def parameters(input_dict,country_data):
     params.add('r_meeting2b', value=input_dict["r_meeting2b"], vary=True, min=0)
     params.add('r_meeting3b', value=input_dict["r_meeting3b"], vary=True, min=0)
     params.add('r_meeting4b', value=input_dict["r_meeting4b"], vary=True, min=0)
-    params.add('r_infection1', value=input_dict["r_infection1"], vary=True,min=0)
-    params.add('r_infection2', value=input_dict["r_infection2"], vary=True,min=0)
-    params.add('r_infection3', value=input_dict["r_infection3"], vary=True,min=0)
-    params.add('r_infection4', value=input_dict["r_infection4"], vary=True,min=0)
-    params.add('r_sym', value=input_dict["r_sym"], vary=True,min=0)
-    params.add('r_hos', value=input_dict["r_hos"], vary=True,min=0)
-    params.add('r_d0', value=input_dict["r_d0"], vary=True, min =0)
-    params.add('r_d1', value=input_dict["r_d1"], vary=True,min=0)
-    params.add('r_d2', value=input_dict["r_d2"], vary=False,min=0)
-    params.add('r_im1', value=input_dict["r_im1"], vary=True,min=0)
-    params.add('r_im2', value=input_dict["r_im2"], vary=True,min=0)
-    params.add('r_im3', value=input_dict["r_im3"], vary=True,min=0)
-    params.add('r_ic', value=input_dict["r_ic"], vary=True,min=0)
-    params.add('r_rehos', value=input_dict["r_rehos"], vary=True,min=0)
+    if incomplete:
+        std_dict = file_to_dict('stable_parameters.txt')
+        params.add('r_infection1', value=std_dict["r_infection1"], vary=False)
+        params.add('r_infection2', value=std_dict["r_infection2"], vary=False)
+        params.add('r_infection3', value=std_dict["r_infection3"], vary=False)
+        params.add('r_infection4', value=std_dict["r_infection4"], vary=False)
+        params.add('r_sym', value=std_dict["r_sym"], vary=False)
+        params.add('r_hos', value=std_dict["r_hos"], vary=False)
+        params.add('r_d0', value=std_dict["r_d0"], vary=False)
+        params.add('r_d1', value=std_dict["r_d1"], vary=False)
+        params.add('r_d2', value=std_dict["r_d2"], vary=False)
+        params.add('r_im1', value=std_dict["r_im1"], vary=False)
+        params.add('r_im2', value=std_dict["r_im2"], vary=False)
+        params.add('r_im3', value=std_dict["r_im3"], vary=False)
+        params.add('r_ic', value=std_dict["r_ic"], vary=False)
+        params.add('r_rehos', value=std_dict["r_rehos"], vary=False)
+    else:
+        params.add('r_infection1', value=input_dict["r_infection1"], vary=True,min=0)
+        params.add('r_infection2', value=input_dict["r_infection2"], vary=True,min=0)
+        params.add('r_infection3', value=input_dict["r_infection3"], vary=True,min=0)
+        params.add('r_infection4', value=input_dict["r_infection4"], vary=True,min=0)
+        params.add('r_sym', value=input_dict["r_sym"], vary=True,min=0)
+        params.add('r_hos', value=input_dict["r_hos"], vary=True,min=0)
+        params.add('r_d0', value=input_dict["r_d0"], vary=True, min =0)
+        params.add('r_d1', value=input_dict["r_d1"], vary=True,min=0)
+        params.add('r_d2', value=input_dict["r_d2"], vary=False,min=0)
+        params.add('r_im1', value=input_dict["r_im1"], vary=True,min=0)
+        params.add('r_im2', value=input_dict["r_im2"], vary=True,min=0)
+        params.add('r_im3', value=input_dict["r_im3"], vary=True,min=0)
+        params.add('r_ic', value=input_dict["r_ic"], vary=True,min=0)
+        params.add('r_rehos', value=input_dict["r_rehos"], vary=True,min=0)
     params.add('n0_susc', value=country_data[0,0], vary=False)
     params.add('n0_inf1', value=country_data[0,1], vary=False)
     params.add('n0_inf2', value=country_data[0,2], vary=False)

@@ -19,7 +19,7 @@ if not os.path.exists('figures'):
 colors = ['r', 'b', 'g', 'c', 'm', 'k', 'y']
 
 # what country/region?
-country = 'sicilia' #pick 'iceland' for Iceland
+country = 'iceland' #pick 'iceland' for Iceland
 datafile = country + '_data.csv'
 parameterfile = country + '_parameters.txt'
 input_dict = file_to_dict(parameterfile) 
@@ -48,7 +48,7 @@ t_measured = np.linspace(0, amount_of_days - 1, amount_of_days)
 
 
 # fit model
-result = minimize(residual, params, args=(t_measured, country_data), method='leastsq',nan_policy='raise')  # leastsq nelder
+result = minimize(residual, params, args=(t_measured, country_data), method='leastsq',nan_policy='omit')  # leastsq nelder
 # check results of the fit
 data_fitted = g(np.linspace(0., amount_of_days, 100), n0, result.params)
 # display fitted statistics

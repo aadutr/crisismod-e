@@ -1,0 +1,9 @@
+﻿day,month,Guessed asymptomatic,Symptomatic,Hospitalized,ICU,Recovered,,Death
+26,3,NaN,802,15,2,68,,2
+27,3,NaN,802,17,3,82,,2
+28,3,NaN,963,19,6,114,,2
+29,3,NaN,1020,19,6,124,,2
+30,3,NaN,1086,25,9,139,,2
+31,3,NaN,1135,35,11,198,,2
+1,4,NaN,1220,35,11,225,,2
+2,4,NaN,1220,41,12,236,,2
