@@ -6,7 +6,7 @@ from scipy.optimize import minimize
 from scipy.optimize import curve_fit
 import os
 from function_lib_new import *
-from lmfit import minimize, Parameters, Parameter, report_fit, fit_report
+from lmfit import minimize, Parameters, Parameter, report_fit, fit_report, conf_interval, Minimizer
 from scipy.integrate import odeint
 import pickle
 
@@ -19,7 +19,7 @@ if not os.path.exists('figures'):
 colors = ['r', 'b', 'g', 'c', 'm', 'k', 'y']
 
 # what country/region?
-country = 'geneve' #pick 'iceland' for Iceland
+country = 'sicilia' #pick 'iceland' for Iceland
 datafile = country + '_data.csv'
 parameterfile = country + '_parameters.txt'
 input_dict = file_to_dict(parameterfile) 
@@ -46,13 +46,13 @@ t = np.linspace(tstart, tend, tend * 100)
 amount_of_days = country_data.shape[0]
 t_measured = np.linspace(0, amount_of_days - 1, amount_of_days)
 
+
 # fit model
 result = minimize(residual, params, args=(t_measured, country_data), method='leastsq',nan_policy='raise')  # leastsq nelder
 # check results of the fit
 data_fitted = g(np.linspace(0., amount_of_days, 100), n0, result.params)
 # display fitted statistics
 report_fit(result)
-
 
 #Below is construction to use when running the minimizer on multiple datasets
 #and saving the parameters to compare later on.
@@ -76,7 +76,7 @@ plt.title(subtitle_string, fontsize = 8)
 ax1.set_ylabel('Fraction of people')
 ax1.set_xlabel('Time (days)')
 #ax1.set_ylim([0,0.00020])
-ax1.set_ylim([0, 1.1 * max(data_fitted[:, 1])])
+ax1.set_ylim([0, 1.1 * max(data_fitted[:, 2])])
 
 plt.show()
 fig1.savefig('figures/Model_fit_'+ country +'.png')

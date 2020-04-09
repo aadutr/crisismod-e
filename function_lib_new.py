@@ -182,7 +182,7 @@ def parameters(input_dict,country_data):
     params.add('r_infection4', value=input_dict["r_infection4"], vary=True,min=0)
     params.add('r_sym', value=input_dict["r_sym"], vary=True,min=0)
     params.add('r_hos', value=input_dict["r_hos"], vary=True,min=0)
-    params.add('r_d0', value=input_dict["r_d0"], vary=True,min=0)
+    params.add('r_d0', value=input_dict["r_d0"], vary=True, min =0)
     params.add('r_d1', value=input_dict["r_d1"], vary=True,min=0)
     params.add('r_d2', value=input_dict["r_d2"], vary=False,min=0)
     params.add('r_im1', value=input_dict["r_im1"], vary=True,min=0)
