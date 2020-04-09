@@ -8,7 +8,6 @@ import os
 from function_lib_new import *
 from lmfit import minimize, Parameters, Parameter, report_fit, fit_report
 from scipy.integrate import odeint
-import pickle
 
 # save the figures in a separate folder
 if not os.path.exists('figures'):
@@ -68,8 +67,25 @@ fitted_params = np.zeros((len(params),len(countries)))
 for minresult in fits:
     fitted_params[:,i] = list(minresult.params.values())
     i+=1
-n = 0 
-for name, val in fits[0].params.items():
-    toprint = name + str(fitted_params[n,:])
-    print(toprint)
-    n+=1
+    
+# n = 0 
+# for name, val in fits[0].params.items():
+#     toprint = name + str(fitted_params[n,:])
+#     print(toprint)
+#     n+=1
+    
+#the parameters we expect to be the same are everything but r_meetings, so for
+#use in further models we will set these paramters to the median of the found ones
+to_be_deleted = list(range(0,8,1)) + list(range(22,39,1))
+stable_params = np.delete(fitted_params, to_be_deleted, axis=0) #delete the rows of the params that should differ per set
+stable_params = np.median(stable_params, axis=1)
+newline = '#\n'
+to_write = ''
+keys = list(fits[0].params.keys())
+for index in range(8,22,1):
+    to_write+=newline
+    to_write+=keys[index] + ' ' + str(stable_params[index-8]) + '\n'
+    
+
+with open("stable_parameters.txt", "w") as file:
+    file.write(to_write)
