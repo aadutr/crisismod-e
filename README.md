@@ -1,2 +1,2 @@
 # crisismod-e
-private repository for the crisismod-e ODE model development
+public repository for ODE model development by Nanobiology students from the TU Delft.
