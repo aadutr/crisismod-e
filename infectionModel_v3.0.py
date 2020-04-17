@@ -19,7 +19,7 @@ if not os.path.exists('figures'):
 colors = ['r', 'b', 'g', 'c', 'm', 'k', 'y']
 
 # what country/region?
-country = 'iceland' #pick 'iceland' for Iceland
+country = 'geneve' #pick 'iceland' for Iceland
 datafile = country + '_data.csv'
 parameterfile = country + '_parameters.txt'
 input_dict = file_to_dict(parameterfile) 
